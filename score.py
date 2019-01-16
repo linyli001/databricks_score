@@ -48,7 +48,7 @@ if __name__ == '__main__':
         .builder \
         .getOrCreate()
 
-    #4. load the data to parquet format from mount data path 
+    #4. load the data with parquet format from mount data path 
     data_path = mount_dbfs + args.data_path
     print("data path mount to dbfs is:", data_path)
     test = spark.read.parquet(data_path)
