@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('--AZUREML_ARM_RESOURCEGROUP', type=str)
     parser.add_argument('--AZUREML_ARM_WORKSPACE_NAME', type=str)
     parser.add_argument('--AZUREML_ARM_PROJECT_NAME', type=str)
+    parser.add_argument('--AZUREML_SCRIPT_DIRECTORY_NAME', type=str)  
 
     args = parser.parse_args()
 
