@@ -60,6 +60,8 @@ if __name__ == '__main__':
 
     #6. predict test data on model
     prediction = trainedModel.transform(test)
-    prediction.head()
+    print("Finish the prediction for input data")
+    result=prediction.head()
+    print(result)
 
 
