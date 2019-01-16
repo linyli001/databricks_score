@@ -4,7 +4,8 @@ import json
 import argparse
 
 if __name__ == '__main__':
-
+    
+    #1. prepare input parameters from command line.  
     #input parameters for script to run
     parser = argparse.ArgumentParser()
     parser.add_argument('--asb_account', type=str, dest='asb_account', help='ASB account for access')
@@ -23,17 +24,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    #2. mount input Azure Blob to dbfs
     mount_dbfs = "/mnt/model/"
-
-    """
-    asb_account = "wasbs://azureml@amladbjostoragemtevfszo.blob.core.windows.net/"
-    asb_key_name = "fs.azure.account.key.amladbjostoragemtevfszo.blob.core.windows.net"
-    asb_key = "ofSDgi91/2+/TP3oDp32UNAodi/wYyAvE7Z2iPvkCkDa39EZUbxbB8ceGNk9DMQ58SYCQfrboMvGNiTTaGkNBg=="
-    data_path = '%s/data' %(mount_dbfs)
-    model_path = "%s/ExperimentRun/103af909-6d8b-4b48-a219-7a0e15e4b293/outputs/" % (mount_dbfs)
-    """
-
-    # mount input Azure Blob to dbfs
+    
+    #if the mount path already exists, unmount firstly.
     try:
         dbutils.fs.ls(mount_dbfs)
     except Exception:
@@ -46,23 +40,24 @@ if __name__ == '__main__':
       mount_point = mount_dbfs,
       extra_configs = {args.asb_key_name: args.asb_key}
     )
-    print("asb has been mounted to dbfs")
+    print("Azure blob has been mounted to dbfs path", mount_dbfs)
 
-    #2. load test data
+    #3. prepare spark context in databricks.
     spark = SparkSession \
         .builder \
         .getOrCreate()
 
+    #4. load the data to parquet format from mount data path 
     data_path = mount_dbfs + args.data_path
     print("data path mount to dbfs is:", data_path)
     test = spark.read.parquet(data_path)
 
-    #3. load test model
+    #5. load model with PipelineModel from mount model path
     model_path = mount_dbfs + args.model_path
     print("model path mount to dbfs is:", model_path)
     trainedModel = PipelineModel.load(model_path)
 
-    #4. predict test data on model
+    #6. predict test data on model
     prediction = trainedModel.transform(test)
     prediction.head()
 
